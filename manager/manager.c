@@ -16,7 +16,7 @@ int main(int argc, char **argv) {
         return -1;
     }
     
-    switch{
+    switch(
     
     case("create"):
     char[52] box_name = argv[3];
@@ -34,4 +34,5 @@ int main(int argc, char **argv) {
     print_usage();
     WARN("unimplemented"); // TODO: implement
     return -1;
+    )
 }

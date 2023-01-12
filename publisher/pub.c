@@ -25,19 +25,27 @@ void send_msg(int tx, char const *str) {
         written += ret;
     }
 }
+char fillString(char string, int tamanho){
+    char size[tamanho];
+    memset(size, "/0", tamanho);
+    memset(size, string, sizeof(string));
+    return size;
+
+}
 
 
 int main(int argc, char **argv) {
     if (argc != 4){
         return -1;
     }
-    if (argv[0] != "pub"){
-        return -1;
-    }
+ 
 
-    char register_pipe_name = argv[1];
-    char pipe_name = argv[2];
-    char box_name= argv[3];
+    char register_pipe_name[256];
+    strncpy(register_pipe_name, argv[1], 256);
+    char pipe_name[256];
+    strncpy(pipe_name, argv[2], 256);
+    char box_name[32] = argv[3];
+    strncpy(box_name, argv[3], 32);
     
     if (unlink(pipe_name) != 0 && errno != ENOENT) {
         fprintf(stderr, "[ERR]: unlink(%s) failed: %s\n", pipe_name,
@@ -50,6 +58,14 @@ int main(int argc, char **argv) {
         exit(EXIT_FAILURE);
 
     }
+
+    int register_pipe = open(register_pipe_name, O_WRONLY );
+    char strngcat[512] = strncat(fillString(register_pipe_name, 256), fillString(pipe_name, 256), 512);
+    char final_register[544] = strncat(strngcat, fillString(box_name, 32), 544);
+    write(register_pipe, final_register, 544);
+    close(register_pipe);
+
+
     int register_pipe = open(register_pipe_name, O_WRONLY );
 
     int tx = open(pipe_name, O_WRONLY);
