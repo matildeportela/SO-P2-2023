@@ -28,19 +28,19 @@ int main(int argc, char **argv) {
     if (unlink(register_pipe_name) != 0 && errno != ENOENT) {
         fprintf(stderr, "[ERR]: unlink(%s) failed: %s\n", register_pipe_name,
                 strerror(errno));
-        exit(EXIT_FAILURE);
+        return -1;
     }
 
     // Create pipe
     if (mkfifo(register_pipe_name, 0640) != 0) {
         fprintf(stderr, "[ERR]: mkfifo failed: %s\n", strerror(errno));
-        exit(EXIT_FAILURE);
+        return -1;
     }
 
     int rx = open(register_pipe_name, O_RDONLY);
     if (rx == -1) {
         fprintf(stderr, "[ERR]: open failed: %s\n", strerror(errno));
-        exit(EXIT_FAILURE);
+        return -1;
     }
     // while (true) {
     //     char buffer[BUFFER_SIZE];

@@ -57,14 +57,11 @@ int main(int argc, char **argv) {
     int rx = open(pipe_name, O_RDONLY);
     if (rx == -1) {
         fprintf(stderr, "[ERR]: open failed: %s\n", strerror(errno));
-        exit(EXIT_FAILURE);
-
-
-
-    
+        return -1;
 
 
     fprintf(stderr, "usage: sub <register_pipe_name> <box_name>\n");
     WARN("unimplemented"); // TODO: implement
     return -1;
+}
 }
