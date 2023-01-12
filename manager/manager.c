@@ -1,5 +1,6 @@
 #include "logging.h"
 
+
 static void print_usage() {
     fprintf(stderr, "usage: \n"
                     "   manager <register_pipe_name> create <box_name>\n"
@@ -8,6 +9,12 @@ static void print_usage() {
 }
 
 int main(int argc, char **argv) {
+    if(argc =! 4){
+        return -1;
+    }
+    if(argv[0] != "sub"){
+        return -1;
+    }
     
     switch{
     
@@ -22,7 +29,7 @@ int main(int argc, char **argv) {
     default:
     char[256] register_pipe_name = argv[1];
     char[256] pipe_name = argv[2];
-    }
+    
 
     print_usage();
     WARN("unimplemented"); // TODO: implement
