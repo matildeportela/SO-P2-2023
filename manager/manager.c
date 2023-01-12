@@ -8,8 +8,22 @@ static void print_usage() {
 }
 
 int main(int argc, char **argv) {
-    (void)argc;
-    (void)argv;
+    
+    switch{
+    
+    case("create"):
+    char[52] box_name = argv[3];
+    //function create box_name
+    
+    case("remove"):
+    char[52] box_name = argv[3];
+    //function remove box_name
+
+    default:
+    char[256] register_pipe_name = argv[1];
+    char[256] pipe_name = argv[2];
+    }
+
     print_usage();
     WARN("unimplemented"); // TODO: implement
     return -1;
