@@ -28,7 +28,7 @@ void send_msg(int tx, char const *str) {
 
 char* fillString(char string[], int tamanho){
     char* size[tamanho];
-    memset(size, "/0", tamanho);
+    memset(size, "\0", tamanho);
     memset(size, string, sizeof(string));
     return size;
 
@@ -40,12 +40,17 @@ int main(int argc, char **argv) {
         return -1;
     }
 
-    char register_pipe_name[256];
-    strncpy(register_pipe_name, argv[1], 256);
-    char pipe_name[256];
-    strncpy(pipe_name, argv[2], 256);
-    char box_name[32] = argv[3];
-    strncpy(box_name, argv[3], 32);
+    char register_pipe_name_uncompleted[256];
+    strcpy(register_pipe_name_uncompleted, argv[1]);
+    char register_pipe_name[256] = fillString(register_pipe_name_uncompleted, 256);
+    char pipe_name_uncompleted[256];
+    strcpy(pipe_name_uncompleted, argv[2]);
+    char pipe_name[256] = fillString(pipe_name_uncompleted, 256);
+    char box_name_uncompleted[32];
+    strcpy(box_name_uncompleted, argv[3]);
+    char box_name[32] = fillString(box_name_uncompleted, 32);
+
+
 
     
     if (unlink(pipe_name) != 0 && errno != ENOENT) {

@@ -13,7 +13,13 @@
 #include <stdint.h>
 
 
-#define BUFFER_SIZE (128)
+int fillString(char string, int tamanho){
+    char size[tamanho];
+    memset(size, "\0", tamanho);
+    memset(size, string, sizeof(string));
+    return 0;
+
+}
 
 
 int main(int argc, char **argv) {
@@ -23,9 +29,14 @@ int main(int argc, char **argv) {
     }
     
     
-    char register_pipe_name[256];
+    char register_pipe_name_uncompleted[256];
 
-    strncpy(register_pipe_name, argv[1], 256);
+
+
+    strcpy(register_pipe_name_uncompleted, argv[1]);
+    char register_pipe_name[256] = fillString(register_pipe_name_uncompleted, 256);
+
+
     //int max_sessions = atoi(argv[2]);
 
     if (unlink(register_pipe_name) != 0 && errno != ENOENT) {
