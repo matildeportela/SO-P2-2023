@@ -23,7 +23,9 @@ int main(int argc, char **argv) {
     
     char register_pipe_name[256];
     strncpy(register_pipe_name, argv[2], 256);
-    int max_sessions = atoi(argv[1]);
+    //int max_sessions = atoi(argv[1]);
+
+    
 
     if (unlink(register_pipe_name) != 0 && errno != ENOENT) {
         fprintf(stderr, "[ERR]: unlink(%s) failed: %s\n", register_pipe_name,

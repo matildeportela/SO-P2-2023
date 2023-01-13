@@ -19,14 +19,15 @@ void send_msg(int tx, char const *str) {
         ssize_t ret = write(tx, str + written, len - written);
         if (ret < 0) {
             fprintf(stderr, "[ERR]: write failed: %s\n", strerror(errno));
-            exit(EXIT_FAILURE);
+            return -1;
         }
 
         written += ret;
     }
 }
-char fillString(char string, int tamanho){
-    char size[tamanho];
+
+char* fillString(char string[], int tamanho){
+    char* size[tamanho];
     memset(size, "/0", tamanho);
     memset(size, string, sizeof(string));
     return size;
@@ -38,7 +39,6 @@ int main(int argc, char **argv) {
     if (argc != 4){
         return -1;
     }
- 
 
     char register_pipe_name[256];
     strncpy(register_pipe_name, argv[1], 256);
@@ -46,16 +46,17 @@ int main(int argc, char **argv) {
     strncpy(pipe_name, argv[2], 256);
     char box_name[32] = argv[3];
     strncpy(box_name, argv[3], 32);
+
     
     if (unlink(pipe_name) != 0 && errno != ENOENT) {
         fprintf(stderr, "[ERR]: unlink(%s) failed: %s\n", pipe_name,
                 strerror(errno));
-        exit(EXIT_FAILURE);
+        return -1;
     }
 
     if (mkfifo(pipe_name, 0640) != 0) {
         fprintf(stderr, "[ERR]: mkfifo failed: %s\n", strerror(errno));
-        exit(EXIT_FAILURE);
+        return -1;
 
     }
 
@@ -71,7 +72,7 @@ int main(int argc, char **argv) {
     int tx = open(pipe_name, O_WRONLY);
     if (tx == -1) {
         fprintf(stderr, "[ERR]: open failed: %s\n", strerror(errno));
-        exit(EXIT_FAILURE);
+        return -1;
     }
 
     fprintf(stderr, "usage: pub <register_pipe_name> <box_name>\n");

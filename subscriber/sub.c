@@ -21,13 +21,13 @@ char fillString(char string, int tamanho){
 }
 
 
-
 int main(int argc, char **argv) {
     
-    if(argc =! 4){
+    if(argc != 4){
+        fprintf(stderr, "usage: pub <register_pipe_name> <pipe_name> <box_name>\n");
         return -1;
     }
-   
+
     char register_pipe_name[256];
     strncpy(register_pipe_name, argv[1], 256);
     char pipe_name[256];
@@ -48,10 +48,13 @@ int main(int argc, char **argv) {
     }
 
     int register_pipe = open(register_pipe_name, O_WRONLY );
+
     char strngcat[512] = strncat(fillString(register_pipe_name, 256), fillString(pipe_name, 256), 512);
     char final_register[544] = strncat(strngcat, fillString(box_name, 32), 544);
     write(register_pipe, final_register, 544);
     close(register_pipe);
+
+    
 
 
     int rx = open(pipe_name, O_RDONLY);
@@ -60,7 +63,7 @@ int main(int argc, char **argv) {
         return -1;
 
 
-    fprintf(stderr, "usage: sub <register_pipe_name> <box_name>\n");
+
     WARN("unimplemented"); // TODO: implement
     return -1;
 }
