@@ -49,9 +49,10 @@ int main(int argc, char **argv) {
 
     int register_pipe = open(register_pipe_name, O_WRONLY );
 
-    char strngcat[512] = strncat(fillString(register_pipe_name, 256), fillString(pipe_name, 256), 512);
-    char final_register[544] = strncat(strngcat, fillString(box_name, 32), 544);
-    write(register_pipe, final_register, 544);
+    char strngcat[257] = strncat("2",fillString(pipe_name, 256),257);
+    char final_register[289] = strncat(strngcat,fillString(box_name, 32) , 289);
+    write(register_pipe, final_register, 289);
+
     close(register_pipe);
 
     
