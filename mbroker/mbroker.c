@@ -44,6 +44,7 @@ int main(int argc, char **argv) {
         fprintf(stderr, "[ERR]: open failed: %s\n", strerror(errno));
         return -1;
     }
+<<<<<<< HEAD
     
     char register_request[289];
     if (read(rx , register_request, 289) == -1){
@@ -125,6 +126,15 @@ int main(int argc, char **argv) {
     
 
 
+=======
+    char register_request[289];
+    if(read(rx , register_request, 289) == -1){
+        return -1;
+    }
+    close(rx);
+
+    
+>>>>>>> 3776d9d73eaca1a737427f149884bbd62d8d8c4a
 
     return 0;
 }

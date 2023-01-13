@@ -66,15 +66,26 @@ int main(int argc, char **argv) {
     write(register_pipe, final_register, 289);
     close(register_pipe);
 
-    int register_pipe = open(register_pipe_name, O_WRONLY );
+    
 
     int tx = open(pipe_name, O_WRONLY);
     if (tx == -1) {
         fprintf(stderr, "[ERR]: open failed: %s\n", strerror(errno));
         return -1;
     }
+    char publisher_message[1024];
+    while(scanf("%1024s", publisher_message) != EOF){
+        
+    }
+    char publisher_message_final[1024];
+    if(strlen(publisher_message) != 1024){
+        strcpy(publisher_message_final, fillString(publisher_message, 1024));
+        
+    }
+    if(write(tx, publisher_message_final, 1024) == -1){
+        return -1;
+    }
+    close(tx);
 
-    fprintf(stderr, "usage: pub <register_pipe_name> <box_name>\n");
-    WARN("unimplemented"); // TODO: implement
-    return -1;
+    return 0;
 }

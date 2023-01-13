@@ -1,4 +1,15 @@
 #include "logging.h"
+#include <assert.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
 
 static void print_usage() {
@@ -9,30 +20,31 @@ static void print_usage() {
 }
 
 int main(int argc, char **argv) {
-    if(argc != 4){
-        print_usage();
-        return -1;
-    }
-    
     char register_pipe_name[256];
     char pipe_name[256];
     char box_name[32];
-
     strcpy(register_pipe_name, argv[1]);
     strcpy(pipe_name, argv[2]);
-    strcpy(box_name, argv[3]);
+    strcpy(box_name, argv[4]);
+
     
-    if (strcmp(pipe_name, "create") == 0) {
-        // function create box_name
-    } else if (strcmp(pipe_name, "remove") == 0) {
-        // function remove box_name
-    } else if (strcmp(pipe_name, "list") == 0) {
-        // function list
-    } else {
+
+
+    if (strncmp( argv[3], "create",6) == 0) {
+        
+
+        
+    } 
+    else if (strncmp( argv[3] , "remove",6) == 0) {
+        
+    } 
+    else if (strncmp( argv[3] , "list",4) == 0) {
+        
+    } 
+    else {
         print_usage();
         return -1;
     }
-    WARN("unimplemented"); // TODO: implement
-    return -1;
+    return 0;
 
 }
