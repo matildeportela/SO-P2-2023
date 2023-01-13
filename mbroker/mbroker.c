@@ -44,20 +44,12 @@ int main(int argc, char **argv) {
         return -1;
     }
     char register_request[289];
-    read(rx , register_request, 289);
+    if(read(rx , register_request, 289) == -1){
+        return -1;
+    }
     close(rx);
 
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    fprintf(stderr, "usage: mbroker <pipename>\n");
-    WARN("unimplemented"); // TODO: implement
-    return -1;
+
+    return 0;
 }

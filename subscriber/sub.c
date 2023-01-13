@@ -62,10 +62,15 @@ int main(int argc, char **argv) {
     if (rx == -1) {
         fprintf(stderr, "[ERR]: open failed: %s\n", strerror(errno));
         return -1;
+    }
+    
+    char message_from_publisher[1024];
+    if(read(rx, message_from_publisher, 1024 ) == -1){
+        return -1;
+    }
 
 
 
-    WARN("unimplemented"); // TODO: implement
-    return -1;
-}
+    return 0;
+
 }
