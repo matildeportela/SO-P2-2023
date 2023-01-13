@@ -10,6 +10,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <stdint.h>
 
 
 #define BUFFER_SIZE (128)
@@ -44,16 +45,11 @@ int main(int argc, char **argv) {
         fprintf(stderr, "[ERR]: open failed: %s\n", strerror(errno));
         return -1;
     }
-<<<<<<< HEAD
-    
-    char register_request[289];
-    if (read(rx , register_request, 289) == -1){
-        return -1;
-    }
-    
+        
     close(rx);
     
-    int opcode;
+    uint8_t opcode;
+    char opcode_char;
     char named_pipe[256];
     char box_name[32];
     int return_code;
@@ -61,60 +57,62 @@ int main(int argc, char **argv) {
     char c;
 
 
-
-    read(register_request, opcode, 1);
+    read(rx, &opcode_char, 1);
+    opcode = (uint8_t) opcode_char;
     
     switch (opcode)
     {
     case(1):
     //pedido de registo de publisher
-        read(register_request ,named_pipe, 256);
-        read(register_request, box_name, 32);
+        read(rx ,named_pipe, 256);
+        read(rx, box_name, 32);
+        //pcq_enqueue();
+
 
     break;
 
     case(2):
     //pedido de registo de subscriber
-        read(register_request,named_pipe, 256);
-        read(register_request, box_name, 32);
+        read(rx,named_pipe, 256);
+        read(rx, box_name, 32);
     
     break;
 
     case(3):
     //pedido de criação de caixa
-        read(register_request,named_pipe, 256);
-        read(register_request, box_name, 32);
+        read(rx,named_pipe, 256);
+        read(rx, box_name, 32);
         
     break;
 
     case(4):
     //resposta ao pedido de criação de caixa
         //return_code é 0 (sucesso) ou 1 (ERRO)
-        read(register_request, c, 1);
-        return_code = atoi(c);
-        read(register_request, error_message, 1024);
+        read(rx, &c, 1);
+        return_code = atoi(&c);
+        read(rx, error_message, 1024);
         
     
     break;
 
     case(5):
     //pedido de remoção de caixa
-        read(register_request, named_pipe, 256);
-        read(register_request, box_name, 32);
+        read(rx, named_pipe, 256);
+        read(rx, box_name, 32);
     
     break;
 
     case(6):
     //resposta ao pedido de remoção de caixa
         //return_code é 0 (sucesso) ou 1 (ERRO)
-        read(register_request, return_code, 1);
-        read(register_request, error_message, 1024);
+        read(rx, &return_code, 1);
+        read(rx, error_message, 1024);
 
     break;
 
     case(7):
     //pedido de listagem de caixas
-        read(register_request, named_pipe, 256);
+        read(rx, named_pipe, 256);
 
     break;
 
@@ -126,15 +124,6 @@ int main(int argc, char **argv) {
     
 
 
-=======
-    char register_request[289];
-    if(read(rx , register_request, 289) == -1){
-        return -1;
-    }
-    close(rx);
-
-    
->>>>>>> 3776d9d73eaca1a737427f149884bbd62d8d8c4a
 
     return 0;
 }
