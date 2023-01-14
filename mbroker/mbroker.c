@@ -75,8 +75,10 @@ int main(int argc, char **argv) {
     {
     case(1):
     //pedido de registo de publisher
-        read(rx ,named_pipe, 256);
-        read(rx, box_name, 32);
+        if (read(rx ,named_pipe, 256) == -1)
+            return -1;
+        if (read(rx, box_name, 32) == -1)
+            return -1;
         //pcq_enqueue();
 
 
@@ -84,46 +86,57 @@ int main(int argc, char **argv) {
 
     case(2):
     //pedido de registo de subscriber
-        read(rx,named_pipe, 256);
-        read(rx, box_name, 32);
+        if (read(rx,named_pipe, 256) == -1)
+            return -1;
+        if (read(rx, box_name, 32) == -1)
+            return -1;
     
     break;
 
     case(3):
     //pedido de criação de caixa
-        read(rx,named_pipe, 256);
-        read(rx, box_name, 32);
+        if (read(rx,named_pipe, 256) == -1)
+            return -1;
+        if (read(rx, box_name, 32) == -1)
+            return -1;
         
     break;
 
     case(4):
     //resposta ao pedido de criação de caixa
         //return_code é 0 (sucesso) ou 1 (ERRO)
-        read(rx, &c, 1);
+        if (read(rx, &c, 1) == -1)
+            return -1;
         return_code = atoi(&c);
-        read(rx, error_message, 1024);
+        if (read(rx, error_message, 1024) == -1)
+            return -1;
         
     
     break;
 
     case(5):
     //pedido de remoção de caixa
-        read(rx, named_pipe, 256);
-        read(rx, box_name, 32);
+        if (read(rx, named_pipe, 256) == -1)
+            return -1;
+        if (read(rx, box_name, 32) == -1)
+            return -1;
     
     break;
 
     case(6):
     //resposta ao pedido de remoção de caixa
         //return_code é 0 (sucesso) ou 1 (ERRO)
-        read(rx, &return_code, 1);
-        read(rx, error_message, 1024);
+        if (read(rx, &return_code, 1) == -1)
+            return -1;
+        if (read(rx, error_message, 1024) == -1)
+            return -1;
 
     break;
 
     case(7):
     //pedido de listagem de caixas
-        read(rx, named_pipe, 256);
+        if (read(rx, named_pipe, 256) == -1)
+            return -1;
 
     break;
 
