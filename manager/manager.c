@@ -19,10 +19,13 @@ char* fillString(char* string, size_t tamanho){
         
         }
     }
+
     
     return string;
 
 }
+
+
 
 
 
@@ -34,11 +37,15 @@ static void print_usage() {
 }
 
 int main(int argc, char **argv) {
+    if(argc != 4 && argc != 5){
+        print_usage();
+        return -1;
+    }
     char register_pipe_name[256];
-    strcpy(register_pipe_name, fillString(argv[1], 256));
+    memcpy(register_pipe_name, fillString(argv[1], 256), 256);
 
     char pipe_name[256];
-    strcpy(pipe_name, fillString(argv[2], 256));
+    memcpy(pipe_name, fillString(argv[2], 256), 256);
     
     
     
@@ -59,34 +66,34 @@ int main(int argc, char **argv) {
 
     if (strncmp( argv[3], "create",6) == 0) {
         char box_name[32];  
-        strcpy(box_name, fillString(argv[4], 32));
-        char strngcat[257] = strncat("3",fillString(pipe_name, 256),257);
-        char final_register[289] = strncat(strngcat,fillString(box_name, 32) , 289);
-        if(write(register_pipe, final_register, 289) == -1){
+        memcpy(box_name, fillString(argv[4], 32), 32);
+        char request[289];
+        memcpy(request, "3",1);
+        memcpy(request+1,fillString(pipe_name, 256),256);
+        memcpy(request+257,fillString(box_name, 32) , 32);
+        if(write(register_pipe, request, 289) == -1){
             close(register_pipe);
             return -1;
         }
-        
-    
     }
     else if (strncmp( argv[3] , "remove",6) == 0) {
         char box_name[32];  
-        strcpy(box_name, fillString(argv[4], 32));
-        char strngcat[257] = strncat("5",fillString(pipe_name, 256),257);
-        char final_register[289] = strncat(strngcat,fillString(box_name, 32) , 289);
-        if(write(register_pipe, final_register, 289) == -1){
+        memcpy(box_name, fillString(argv[4], 32), 32);
+        char request[289];
+        memcpy(request, "5",1);
+        memcpy(request+1,fillString(pipe_name, 256),256);
+        memcpy(request+257,fillString(box_name, 32) , 32);
+        if(write(register_pipe, request, 289) == -1){
             close(register_pipe);
             return -1;
         }
-        
-    
-
-        
     } 
     else if (strncmp( argv[3] , "list",4) == 0) {
-        char final_register[257] = strncat("7",pipe_name , 257);
+        char request[257];
+        memcpy(request, "7", 1);
+        memcpy(request + 1, pipe_name , 256);
 
-        if(write(register_pipe, final_register, 257) == -1){
+        if(write(register_pipe, request, 257) == -1){
             close(register_pipe);
             return -1;
         }

@@ -34,11 +34,11 @@ int main(int argc, char **argv) {
     }
 
     char register_pipe_name[256];
-    strcpy(register_pipe_name, fillString(argv[1], 256));
+    memcpy(register_pipe_name, fillString(argv[1], 256), 256);
     char pipe_name[256];
-    strcpy(pipe_name, fillString(argv[2], 256));
+    memcpy(pipe_name, fillString(argv[2], 256), 256);
     char box_name[32];
-    strcpy(box_name, fillString(argv[3], 32));
+    memcpy(box_name, fillString(argv[3], 32), 32);
 
     if (unlink(pipe_name) != 0 && errno != ENOENT) {
         fprintf(stderr, "[ERR]: unlink(%s) failed: %s\n", pipe_name,
@@ -53,10 +53,14 @@ int main(int argc, char **argv) {
 
     int register_pipe = open(register_pipe_name, O_WRONLY );
 
-    char strngcat[257] = strncat("2",fillString(pipe_name, 256),257);
-    char final_register[289] = strncat(strngcat,fillString(box_name, 32) , 289);
-    write(register_pipe, final_register, 289);
-
+    char opcode[289];
+    memcpy(opcode, "2",1);
+    memcpy(opcode+1,fillString(pipe_name, 256),256);
+    memcpy(opcode+257,fillString(box_name, 32) , 32);
+    if(write(register_pipe, opcode, 289) == -1){
+        close(register_pipe);
+        return -1;
+    }
     
 
     

@@ -11,20 +11,20 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-void send_msg(int tx, char const *str) {
-    size_t len = strlen(str);
-    size_t written = 0;
+// void send_msg(int tx, char const *str) {
+//     size_t len = strlen(str);
+//     size_t written = 0;
 
-    while (written < len) {
-        ssize_t ret = write(tx, str + written, len - written);
-        if (ret < 0) {
-            fprintf(stderr, "[ERR]: write failed: %s\n", strerror(errno));
-            return -1;
-        }
+//     while (written < len) {
+//         ssize_t ret = write(tx, str + written, len - written);
+//         if (ret < 0) {
+//             fprintf(stderr, "[ERR]: write failed: %s\n", strerror(errno));
+//             return -1;
+//         }
 
-        written += ret;
-    }
-}
+//         written += ret;
+//     }
+// }
 
 char* fillString(char* string, size_t tamanho){
     if(sizeof(string) < tamanho){
@@ -46,11 +46,11 @@ int main(int argc, char **argv) {
     }
 
     char register_pipe_name[256];
-    strcpy(register_pipe_name, fillString(argv[1], 256));
+    memcpy(register_pipe_name, fillString(argv[1], 256), 256);
     char pipe_name[256];
-    strcpy(pipe_name, fillString(argv[2], 256));
+    memcpy(pipe_name, fillString(argv[2], 256), 256);
     char box_name[32];
-    strcpy(box_name, fillString(argv[3], 32));
+    memcpy(box_name, fillString(argv[3], 32), 32);
     
 
 
@@ -69,9 +69,14 @@ int main(int argc, char **argv) {
     }
 
     int register_pipe = open(register_pipe_name, O_WRONLY );
-    char strngcat[257] = strncat("1",fillString(pipe_name, 256),257);
-    char final_register[289] = strncat(strngcat,fillString(box_name, 32) , 289);
-    write(register_pipe, final_register, 289);
+    char request[289];
+    memcpy(request, "1",1);
+    memcpy(request+1,fillString(pipe_name, 256),256);
+    memcpy(request+257,fillString(box_name, 32) , 32);
+    if(write(register_pipe, request, 289) == -1){
+        close(register_pipe);
+        return -1;
+    }
     
 
     

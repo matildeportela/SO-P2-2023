@@ -72,7 +72,8 @@ int main(int argc, char **argv) {
     char c;
 
 
-    read(rx, &opcode_char, 1);
+    if (read(rx, &opcode_char, 1) == -1)
+        return -1;
     opcode = (uint8_t) opcode_char;
     
     switch (opcode)
@@ -148,7 +149,11 @@ int main(int argc, char **argv) {
     //resposta à listagem de caixas vem em várias mensagens
     //DUVIDA: meio confuso perguntar ao prof?????
     break;
+
+    default:
+        return -1;
     }
+    
     
 
 
