@@ -13,11 +13,15 @@
 #include <stdint.h>
 
 
-int fillString(char string, int tamanho){
-    char size[tamanho];
-    memset(size, "\0", tamanho);
-    memset(size, string, sizeof(string));
-    return 0;
+char* fillString(char* string, size_t tamanho){
+    if(sizeof(string) < tamanho){
+        for(int i = sizeof(string); i < tamanho; i++ ){
+            string[i] = '\0';
+        
+        }
+    }
+    
+    return string;
 
 }
 
@@ -29,12 +33,12 @@ int main(int argc, char **argv) {
     }
     
     
-    char register_pipe_name_uncompleted[256];
+    char register_pipe_name[256];
 
 
 
-    strcpy(register_pipe_name_uncompleted, argv[1]);
-    char register_pipe_name[256] = fillString(register_pipe_name_uncompleted, 256);
+    strcpy(register_pipe_name,fillString(argv[1], 256));
+
 
 
     //int max_sessions = atoi(argv[2]);

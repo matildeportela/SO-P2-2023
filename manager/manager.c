@@ -12,13 +12,18 @@
 #include <unistd.h>
 
 
-char* fillString(char string[], int tamanho){
-    char* size[tamanho];
-    memset(size, "\0", tamanho);
-    memset(size, string, sizeof(string));
-    return size;
+char* fillString(char* string, size_t tamanho){
+    if(sizeof(string) < tamanho){
+        for(int i = sizeof(string); i < tamanho; i++ ){
+            string[i] = '\0';
+        
+        }
+    }
+    
+    return string;
 
 }
+
 
 
 static void print_usage() {
@@ -29,12 +34,12 @@ static void print_usage() {
 }
 
 int main(int argc, char **argv) {
-    char register_pipe_name_uncompleted[256];
-    strcpy(register_pipe_name_uncompleted, argv[1]);
-    char register_pipe_name[256] = fillString(register_pipe_name_uncompleted, 256);
-    char pipe_name_uncompleted[256];
-    strcpy(pipe_name_uncompleted, argv[2]);
-    char pipe_name[256] = fillString(pipe_name_uncompleted, 256);
+    char register_pipe_name[256];
+    strcpy(register_pipe_name, fillString(argv[1], 256));
+
+    char pipe_name[256];
+    strcpy(pipe_name, fillString(argv[2], 256));
+    
     
     
 
@@ -53,23 +58,27 @@ int main(int argc, char **argv) {
 
 
     if (strncmp( argv[3], "create",6) == 0) {
-        char box_name_uncompleted[32];  
-        strcpy(box_name_uncompleted, argv[4]);
-        char box_name[32] = fillString(box_name_uncompleted, 32);
+        char box_name[32];  
+        strcpy(box_name, fillString(argv[4], 32));
         char strngcat[257] = strncat("3",fillString(pipe_name, 256),257);
         char final_register[289] = strncat(strngcat,fillString(box_name, 32) , 289);
-        write(register_pipe, final_register, 289);
-        close(register_pipe);
+        if(write(register_pipe, final_register, 289) == -1){
+            close(register_pipe);
+            return -1;
+        }
+        
     
     }
     else if (strncmp( argv[3] , "remove",6) == 0) {
-        char box_name_uncompleted[32];  
-        strcpy(box_name_uncompleted, argv[4]);
-        char box_name[32] = fillString(box_name_uncompleted, 32);
+        char box_name[32];  
+        strcpy(box_name, fillString(argv[4], 32));
         char strngcat[257] = strncat("5",fillString(pipe_name, 256),257);
         char final_register[289] = strncat(strngcat,fillString(box_name, 32) , 289);
-        write(register_pipe, final_register, 289);
-        close(register_pipe);
+        if(write(register_pipe, final_register, 289) == -1){
+            close(register_pipe);
+            return -1;
+        }
+        
     
 
         
@@ -77,15 +86,20 @@ int main(int argc, char **argv) {
     else if (strncmp( argv[3] , "list",4) == 0) {
         char final_register[257] = strncat("7",pipe_name , 257);
 
-        write(register_pipe, final_register, 257);
-        close(register_pipe);
+        if(write(register_pipe, final_register, 257) == -1){
+            close(register_pipe);
+            return -1;
+        }
+        
 
         
     } 
     else {
         print_usage();
+        close(register_pipe);
         return -1;
     }
+    close(register_pipe);
     return 0;
 
 }

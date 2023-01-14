@@ -26,13 +26,18 @@ void send_msg(int tx, char const *str) {
     }
 }
 
-char* fillString(char string[], int tamanho){
-    char* size[tamanho];
-    memset(size, "\0", tamanho);
-    memset(size, string, sizeof(string));
-    return size;
+char* fillString(char* string, size_t tamanho){
+    if(sizeof(string) < tamanho){
+        for(int i = sizeof(string); i < tamanho; i++ ){
+            string[i] = '\0';
+        
+        }
+    }
+    
+    return string;
 
 }
+
 
 
 int main(int argc, char **argv) {
@@ -40,15 +45,13 @@ int main(int argc, char **argv) {
         return -1;
     }
 
-    char register_pipe_name_uncompleted[256];
-    strcpy(register_pipe_name_uncompleted, argv[1]);
-    char register_pipe_name[256] = fillString(register_pipe_name_uncompleted, 256);
-    char pipe_name_uncompleted[256];
-    strcpy(pipe_name_uncompleted, argv[2]);
-    char pipe_name[256] = fillString(pipe_name_uncompleted, 256);
-    char box_name_uncompleted[32];
-    strcpy(box_name_uncompleted, argv[3]);
-    char box_name[32] = fillString(box_name_uncompleted, 32);
+    char register_pipe_name[256];
+    strcpy(register_pipe_name, fillString(argv[1], 256));
+    char pipe_name[256];
+    strcpy(pipe_name, fillString(argv[2], 256));
+    char box_name[32];
+    strcpy(box_name, fillString(argv[3], 32));
+    
 
 
 
@@ -69,13 +72,14 @@ int main(int argc, char **argv) {
     char strngcat[257] = strncat("1",fillString(pipe_name, 256),257);
     char final_register[289] = strncat(strngcat,fillString(box_name, 32) , 289);
     write(register_pipe, final_register, 289);
-    close(register_pipe);
+    
 
     
 
     int tx = open(pipe_name, O_WRONLY);
     if (tx == -1) {
         fprintf(stderr, "[ERR]: open failed: %s\n", strerror(errno));
+        close(register_pipe);
         return -1;
     }
     char publisher_message[1024];
@@ -88,9 +92,11 @@ int main(int argc, char **argv) {
         
     }
     if(write(tx, publisher_message_final, 1024) == -1){
+        close(register_pipe);
         return -1;
     }
     close(tx);
+    close(register_pipe);
 
     return 0;
 }
