@@ -13,17 +13,6 @@
 #include <stdint.h>
 
 
-char* fillString(char* string, size_t tamanho){
-    if(strlen(string) < tamanho){
-        for(size_t i = strlen(string); i < tamanho; i++ ){
-            string[i] = '\0';
-        
-        }
-    }
-    
-    return string;
-
-}
 
 
 int main(int argc, char **argv) {
@@ -34,7 +23,8 @@ int main(int argc, char **argv) {
     
     
     char register_pipe_name[256];
-    strcpy(register_pipe_name,fillString(argv[1], 256));
+    fill_string(register_pipe_name, argv[1], 256);
+
     //int max_sessions = atoi(argv[2]);
 
     if (unlink(register_pipe_name) != 0 && errno != ENOENT) {
@@ -94,17 +84,17 @@ int main(int argc, char **argv) {
 
     case(3):
     //pedido de criação de caixa
-        ssize_t box_request_pipe = read(register_pipe, named_pipe, 256);
-        ssize_t box_request_box = read(register_pipe, box_name, 32);
-        if (box_request_box != -1 && box_request_pipe != -1){
-            if(tfs_open(box_name, O_CREAT) == -1){
-                return -1;
-            }
+        // ssize_t box_request_pipe = read(register_pipe, named_pipe, 256);
+        // ssize_t box_request_box = read(register_pipe, box_name, 32);
+        // if (box_request_box != -1 && box_request_pipe != -1){
+        //     if(tfs_open(box_name, O_CREAT) == -1){
+        //         return -1;
+        //     }
             
 
-        else{
-            return -1;
-        }
+        // else{
+        //     return -1;
+        // }
         
     break;
 
@@ -175,5 +165,4 @@ int main(int argc, char **argv) {
 
 
     return 0;
-    }   
-}
+}   

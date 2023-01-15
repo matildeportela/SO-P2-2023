@@ -13,18 +13,6 @@
 #include <signal.h>
 
 
-char* fillString(char* string, size_t tamanho){
-    if(sizeof(string) < tamanho){
-        for(int i = sizeof(string); i < tamanho; i++ ){
-            string[i] = '\0';
-        
-        }
-    }
-    
-    return string;
-
-}
-
 
 
 int main(int argc, char **argv) {
@@ -33,11 +21,11 @@ int main(int argc, char **argv) {
     }
 
     char register_pipe_name[256];
-    memcpy(register_pipe_name, fillString(argv[1], 256), 256);
+    fill_string(register_pipe_name, argv[1], 256);
     char pipe_name[256];
-    memcpy(pipe_name, fillString(argv[2], 256), 256);
+    fill_string(pipe_name, argv[2], 256);
     char box_name[32];
-    memcpy(box_name, fillString(argv[3], 32), 32);
+    fill_string(box_name, argv[3], 32);
     
 
 

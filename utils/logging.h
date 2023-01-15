@@ -22,6 +22,8 @@ typedef enum {
 void set_log_level(log_level_t level);
 extern log_level_t g_level;
 
+void fill_string(char* string, const char *input, size_t size);
+
 #define INFO(...)                                                              \
     do {                                                                       \
         char buf[2048];                                                        \
