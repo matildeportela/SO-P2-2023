@@ -15,6 +15,16 @@
 
 
 
+
+char* concatenate(const char* str1, const char* str2) {
+    size_t len1 = strlen(str1);
+    size_t len2 = strlen(str2);
+    char* result = malloc(len1 + len2 + 1);
+    memcpy(result, str1, len1);
+    memcpy(result + len1, str2, len2 + 1);
+    return result;
+}
+
 int main(int argc, char **argv) {
     if (argc != 4){
         return -1;
@@ -37,18 +47,18 @@ int main(int argc, char **argv) {
         return -1;
     }
 
-    if (mkfifo(pipe_name, 0640) != 0) {
+    if (mkfifo(pipe_name, 0640) == -1) {
         fprintf(stderr, "[ERR]: mkfifo failed: %s\n", strerror(errno));
         return -1;
 
     }
 
     int register_pipe = open(register_pipe_name, O_WRONLY );
-    char request[289];
-    memcpy(request, "1",1);
-    memcpy(request+1,fillString(pipe_name, 256),256);
-    memcpy(request+257,fillString(box_name, 32) , 32);
-    if(write(register_pipe, request, 289) == -1){
+    char request_1[1];
+    memcpy(request_1, "1",1);
+    char request[257];
+    memcpy(request, concatenate(request_1,pipe_name), 257);
+   if(write(register_pipe,  concatenate(request,box_name), 289) == -1){
         return -1;
     }
     
@@ -61,15 +71,18 @@ int main(int argc, char **argv) {
         close(register_pipe);
         return -1;
     }
-    char publisher_message[1025];
-    while(scanf("%1023s", publisher_message) != EOF){
+    char publisher_message_scanned[1024];
+    
+    while(scanf("%1023s", publisher_message_scanned) != EOF){
         
     }
-    memcpy(publisher_message, "9", 1);
-    memcpy(publisher_message + 1, fillString(publisher_message, 1024), 1024);
+    char publisher_message_final[1025];
+    char scanned_size[1024];
+    memcpy(publisher_message_final, "9", 1);
+    memcpy(publisher_message_final + 1, fill_string(scanned_size, publisher_message_scanned, 1024), 1024);
     
 
-    if(write(publisher_pipe, publisher_message, 1025) == -1){
+    if(write(publisher_pipe, publisher_message_final, 1025) == -1){
         return -1;
     }
     close(publisher_pipe);

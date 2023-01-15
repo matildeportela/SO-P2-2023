@@ -1,9 +1,10 @@
 #include "logging.h"
 
-void fill_string(char* string, const char *input, size_t size) {
+char* fill_string(char* string, const char *input, size_t size) {
     memset(string, '\0', size);
     memcpy(string, input, strlen(input));
     string[size - 1] = '\0';
+    return string;
 }
 
 

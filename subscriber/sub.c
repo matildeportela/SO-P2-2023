@@ -12,16 +12,13 @@
 #include <unistd.h>
 
 
-char* fillString(char* string, size_t tamanho){
-    if(sizeof(string) < tamanho){
-        for(int i = sizeof(string); i < tamanho; i++ ){
-            string[i] = '\0';
-        
-        }
-    }
-    
-    return string;
-
+char* concatenate(const char* str1, const char* str2) {
+    size_t len1 = strlen(str1);
+    size_t len2 = strlen(str2);
+    char* result = malloc(len1 + len2 + 1);
+    memcpy(result, str1, len1);
+    memcpy(result + len1, str2, len2 + 1);
+    return result;
 }
 
 
@@ -34,11 +31,12 @@ int main(int argc, char **argv) {
     }
 
     char register_pipe_name[256];
-    memcpy(register_pipe_name, fillString(argv[1], 256), 256);
+    fill_string(register_pipe_name, argv[1], 256);
     char pipe_name[256];
-    memcpy(pipe_name, fillString(argv[2], 256), 256);
+    fill_string(pipe_name, argv[2], 256);
     char box_name[32];
-    memcpy(box_name, fillString(argv[3], 32), 32);
+    fill_string(box_name, argv[3], 32);
+    
 
     if (unlink(pipe_name) != 0 && errno != ENOENT) {
         fprintf(stderr, "[ERR]: unlink(%s) failed: %s\n", pipe_name,
@@ -52,13 +50,11 @@ int main(int argc, char **argv) {
     }
 
     int register_pipe = open(register_pipe_name, O_WRONLY );
-
-    char opcode[289];
-    memcpy(opcode, "2",1);
-    memcpy(opcode+1,fillString(pipe_name, 256),256);
-    memcpy(opcode+257,fillString(box_name, 32) , 32);
-    if(write(register_pipe, opcode, 289) == -1){
-        close(register_pipe);
+    char request_1[1];
+    memcpy(request_1, "2",1);
+    char request[257];
+    memcpy(request, concatenate(request_1,pipe_name), 257);
+    if(write(register_pipe,  concatenate(request,box_name), 289) == -1){
         return -1;
     }
     

@@ -11,19 +11,15 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-
-char* fillString(char* string, size_t tamanho){
-    if(sizeof(string) < tamanho){
-        for(int i = sizeof(string); i < tamanho; i++ ){
-            string[i] = '\0';
-        
-        }
-    }
-
-    
-    return string;
-
+char* concatenate(const char* str1, const char* str2) {
+    size_t len1 = strlen(str1);
+    size_t len2 = strlen(str2);
+    char* result = malloc(len1 + len2 + 1);
+    memcpy(result, str1, len1);
+    memcpy(result + len1, str2, len2 + 1);
+    return result;
 }
+
 
 
 
@@ -42,10 +38,10 @@ int main(int argc, char **argv) {
         return -1;
     }
     char register_pipe_name[256];
-    memcpy(register_pipe_name, fillString(argv[1], 256), 256);
-
+    fill_string(register_pipe_name, argv[1], 256);
     char pipe_name[256];
-    memcpy(pipe_name, fillString(argv[2], 256), 256);
+    fill_string(pipe_name, argv[2], 256);
+   
     
     
     
@@ -66,35 +62,32 @@ int main(int argc, char **argv) {
 
     if (strncmp( argv[3], "create",6) == 0) {
         char box_name[32];  
-        memcpy(box_name, fillString(argv[4], 32), 32);
-        char request[289];
-        memcpy(request, "3",1);
-        memcpy(request+1,fillString(pipe_name, 256),256);
-        memcpy(request+257,fillString(box_name, 32) , 32);
-        if(write(register_pipe, request, 289) == -1){
-            close(register_pipe);
+        fill_string(box_name, argv[3], 32);
+        char request_1[1];
+        memcpy(request_1, "3",1);
+        char request[257];
+        memcpy(request, concatenate(request_1,pipe_name), 257);
+        if(write(register_pipe,  concatenate(request,box_name), 289) == -1){
             return -1;
         }
     }
     else if (strncmp( argv[3] , "remove",6) == 0) {
         char box_name[32];  
-        memcpy(box_name, fillString(argv[4], 32), 32);
-        char request[289];
-        memcpy(request, "5",1);
-        memcpy(request+1,fillString(pipe_name, 256),256);
-        memcpy(request+257,fillString(box_name, 32) , 32);
-        if(write(register_pipe, request, 289) == -1){
-            close(register_pipe);
+        fill_string(box_name, argv[3], 32);
+        char request_1[1];
+        memcpy(request_1, "5",1);
+        char request[257];
+        memcpy(request, concatenate(request_1,pipe_name), 257);
+        if(write(register_pipe,  concatenate(request,box_name), 289) == -1){
             return -1;
         }
     } 
     else if (strncmp( argv[3] , "list",4) == 0) {
+        char request_1[1];
+        memcpy(request_1, "7",1);
         char request[257];
-        memcpy(request, "7", 1);
-        memcpy(request + 1, pipe_name , 256);
-
-        if(write(register_pipe, request, 257) == -1){
-            close(register_pipe);
+        memcpy(request, concatenate(request_1,pipe_name), 257);
+        if(write(register_pipe,  request, 257) == -1){
             return -1;
         }
         

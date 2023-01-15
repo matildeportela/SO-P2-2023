@@ -12,7 +12,14 @@
 #include <unistd.h>
 #include <stdint.h>
 
-
+char* concatenate(const char* str1, const char* str2) {
+    size_t len1 = strlen(str1);
+    size_t len2 = strlen(str2);
+    char* result = malloc(len1 + len2 + 1);
+    memcpy(result, str1, len1);
+    memcpy(result + len1, str2, len2 + 1);
+    return result;
+}
 
 
 int main(int argc, char **argv) {
@@ -27,23 +34,24 @@ int main(int argc, char **argv) {
 
     //int max_sessions = atoi(argv[2]);
 
-    if (unlink(register_pipe_name) != 0 && errno != ENOENT) {
-        fprintf(stderr, "[ERR]: unlink(%s) failed: %s\n", register_pipe_name,
+    if (unlink(argv[1]) != 0 && errno != ENOENT) {
+        fprintf(stderr, "[ERR]: unlink(%s) failed: %s\n", argv[1],
                 strerror(errno));
         return -1;
     }
 
     // Create pipe
-    if (mkfifo(register_pipe_name, 0640) != 0) {
+    if (mkfifo(argv[1], 0640) != 0) {
         fprintf(stderr, "[ERR]: mkfifo failed: %s\n", strerror(errno));
         return -1;
     }
 
-    int register_pipe = open(register_pipe_name, O_RDONLY);
+    int register_pipe = open(argv[1], O_RDONLY);
     if (register_pipe == -1) {
         fprintf(stderr, "[ERR]: open failed: %s\n", strerror(errno));
         return -1;
     }
+    tfs_init(NULL);
         
 
     
@@ -68,6 +76,7 @@ int main(int argc, char **argv) {
             return -1;
         if (read(register_pipe, box_name, 32) == -1)
             return -1;
+        printf("goosworkmothafucker\n");
         //pcq_enqueue();
 
 
@@ -116,7 +125,7 @@ int main(int argc, char **argv) {
             return -1;
         if (read(register_pipe, box_name, 32) == -1)
             return -1;
-        int request_result = unlink(box_name);
+        int request_result = tfs_unlink(box_name);
         if(request_result == -1){
             //implementar mensagem de resposta ao pedido
             
@@ -165,4 +174,5 @@ int main(int argc, char **argv) {
 
 
     return 0;
-}   
+    }   
+

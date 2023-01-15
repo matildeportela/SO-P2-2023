@@ -13,6 +13,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <state.h>
+#include <operations.h>
 typedef enum {
     LOG_QUIET = 0,
     LOG_NORMAL = 1,
@@ -22,7 +23,7 @@ typedef enum {
 void set_log_level(log_level_t level);
 extern log_level_t g_level;
 
-void fill_string(char* string, const char *input, size_t size);
+char* fill_string(char* string, const char *input, size_t size);
 
 #define INFO(...)                                                              \
     do {                                                                       \
