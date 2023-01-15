@@ -3,7 +3,6 @@
 #include "logging.h"
 #include <pthread.h>
 
-
 pthread_mutex_t mutex;
 pthread_cond_t podeProd;
 pthread_cond_t podeCons;
@@ -29,13 +28,32 @@ int pcq_create(pc_queue_t *queue, size_t capacity) {
     queue->pcq_head = 0;
     queue->pcq_tail = 0;
 
-    pthread_mutex_init(&queue->pcq_current_size_lock, NULL);
-    pthread_mutex_init(&queue->pcq_head_lock, NULL);
-    pthread_mutex_init(&queue->pcq_tail_lock, NULL);
-    pthread_mutex_init(&queue->pcq_pusher_condvar_lock, NULL);
-    pthread_cond_init(&queue->pcq_pusher_condvar, NULL);
-    pthread_mutex_init(&queue->pcq_popper_condvar_lock, NULL);
-    pthread_cond_init(&queue->pcq_popper_condvar, NULL);
+    if (pthread_mutex_init(&queue->pcq_current_size_lock, NULL) != 0){
+        return -1;
+    }
+    
+    if(pthread_mutex_init(&queue->pcq_head_lock, NULL) != 0){
+        return -1;
+    }
+    
+    if(pthread_mutex_init(&queue->pcq_tail_lock, NULL) != 0){
+        return -1;
+    }
+    
+    if(pthread_mutex_init(&queue->pcq_pusher_condvar_lock, NULL) != 0){
+        return -1;
+    }
+    
+    if(pthread_cond_init(&queue->pcq_pusher_condvar, NULL) != 0){
+        return -1;
+    }
+    
+    if(pthread_mutex_init(&queue->pcq_popper_condvar_lock, NULL) != 0)
+        return -1;
+    
+    if(pthread_cond_init(&queue->pcq_popper_condvar, NULL) != 0){
+        return -1;
+    }
 
     return 0;
 }
@@ -46,13 +64,27 @@ int pcq_create(pc_queue_t *queue, size_t capacity) {
 // If the queue is full, sleep until the queue has space
 int pcq_destroy(pc_queue_t *queue) {
     free(queue->pcq_buffer);
-    pthread_mutex_destroy(&queue->pcq_current_size_lock);
-    pthread_mutex_destroy(&queue->pcq_head_lock);
-    pthread_mutex_destroy(&queue->pcq_tail_lock);
-    pthread_mutex_destroy(&queue->pcq_pusher_condvar_lock);
-    pthread_cond_destroy(&queue->pcq_pusher_condvar);
-    pthread_mutex_destroy(&queue->pcq_popper_condvar_lock);
-    pthread_cond_destroy(&queue->pcq_popper_condvar);
+    if(pthread_mutex_destroy(&queue->pcq_current_size_lock) != 0){
+        return -1;
+    }
+    if(pthread_mutex_destroy(&queue->pcq_head_lock) != 0){
+        return -1;
+    }
+    if(pthread_mutex_destroy(&queue->pcq_tail_lock) != 0){
+        return -1;
+    }
+    if(pthread_mutex_destroy(&queue->pcq_pusher_condvar_lock) != 0){
+        return -1;
+    }
+    if(pthread_cond_destroy(&queue->pcq_pusher_condvar) != 0){
+        return -1;
+    }
+    if(pthread_mutex_destroy(&queue->pcq_popper_condvar_lock) != 0){
+        return -1;
+    }
+    if(pthread_cond_destroy(&queue->pcq_popper_condvar) != 0){
+        return -1;
+    }
     return 0;
 }
 
