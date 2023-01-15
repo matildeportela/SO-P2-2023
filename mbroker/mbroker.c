@@ -34,13 +34,7 @@ int main(int argc, char **argv) {
     
     
     char register_pipe_name[256];
-
-
-
-    strcpy(register_pipe_name,fillString(argv[1], 256));
-
-
-
+    memcpy(register_pipe_name,fillString(argv[1], 256), 256);
     //int max_sessions = atoi(argv[2]);
 
     if (unlink(register_pipe_name) != 0 && errno != ENOENT) {
@@ -55,13 +49,13 @@ int main(int argc, char **argv) {
         return -1;
     }
 
-    int rx = open(register_pipe_name, O_RDONLY);
-    if (rx == -1) {
+    int register_pipe = open(register_pipe_name, O_RDONLY);
+    if (register_pipe == -1) {
         fprintf(stderr, "[ERR]: open failed: %s\n", strerror(errno));
         return -1;
     }
         
-    close(rx);
+
     
     uint8_t opcode;
     char opcode_char;
@@ -72,7 +66,7 @@ int main(int argc, char **argv) {
     char c;
 
 
-    if (read(rx, &opcode_char, 1) == -1)
+    if (read(register_pipe, &opcode_char, 1) == -1)
         return -1;
     opcode = (uint8_t) opcode_char;
     
@@ -80,9 +74,9 @@ int main(int argc, char **argv) {
     {
     case(1):
     //pedido de registo de publisher
-        if (read(rx ,named_pipe, 256) == -1)
+        if (read(register_pipe ,named_pipe, 256) == -1)
             return -1;
-        if (read(rx, box_name, 32) == -1)
+        if (read(register_pipe, box_name, 32) == -1)
             return -1;
         //pcq_enqueue();
 
@@ -91,29 +85,36 @@ int main(int argc, char **argv) {
 
     case(2):
     //pedido de registo de subscriber
-        if (read(rx,named_pipe, 256) == -1)
+        if (read(register_pipe,named_pipe, 256) == -1)
             return -1;
-        if (read(rx, box_name, 32) == -1)
+        if (read(register_pipe, box_name, 32) == -1)
             return -1;
     
     break;
 
     case(3):
     //pedido de criação de caixa
-        if (read(rx,named_pipe, 256) == -1)
+        ssize_t box_request_pipe = read(register_pipe, named_pipe, 256);
+        ssize_t box_request_box = read(register_pipe, box_name, 32);
+        if (box_request_box != -1 && box_request_pipe != -1){
+            if(tfs_open(box_name, O_CREAT) == -1){
+                return -1;
+            }
+            
+
+        else{
             return -1;
-        if (read(rx, box_name, 32) == -1)
-            return -1;
+        }
         
     break;
 
     case(4):
     //resposta ao pedido de criação de caixa
         //return_code é 0 (sucesso) ou 1 (ERRO)
-        if (read(rx, &c, 1) == -1)
+        if (read(register_pipe, &c, 1) == -1)
             return -1;
         return_code = atoi(&c);
-        if (read(rx, error_message, 1024) == -1)
+        if (read(register_pipe, error_message, 1024) == -1)
             return -1;
         
     
@@ -121,26 +122,32 @@ int main(int argc, char **argv) {
 
     case(5):
     //pedido de remoção de caixa
-        if (read(rx, named_pipe, 256) == -1)
+        if (read(register_pipe, named_pipe, 256) == -1)
             return -1;
-        if (read(rx, box_name, 32) == -1)
+        if (read(register_pipe, box_name, 32) == -1)
             return -1;
+        int request_result = unlink(box_name);
+        if(request_result == -1){
+            //implementar mensagem de resposta ao pedido
+            
+        }
+        
     
     break;
 
     case(6):
     //resposta ao pedido de remoção de caixa
         //return_code é 0 (sucesso) ou 1 (ERRO)
-        if (read(rx, &return_code, 1) == -1)
+        if (read(register_pipe, &return_code, 1) == -1)
             return -1;
-        if (read(rx, error_message, 1024) == -1)
+        if (read(register_pipe, error_message, 1024) == -1)
             return -1;
 
     break;
 
     case(7):
     //pedido de listagem de caixas
-        if (read(rx, named_pipe, 256) == -1)
+        if (read(register_pipe, named_pipe, 256) == -1)
             return -1;
 
     break;
@@ -153,6 +160,15 @@ int main(int argc, char **argv) {
     default:
         return -1;
     }
+
+    // int publisher_pipe = open(named_pipe, O_RDONLY);
+    // if (publisher_pipe == -1) {
+    //     fprintf(stderr, "[ERR]: open failed: %s\n", strerror(errno));
+    //     return -1;
+    // }
+
+        
+
     
     
 

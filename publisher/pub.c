@@ -10,21 +10,8 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <signal.h>
 
-// void send_msg(int tx, char const *str) {
-//     size_t len = strlen(str);
-//     size_t written = 0;
-
-//     while (written < len) {
-//         ssize_t ret = write(tx, str + written, len - written);
-//         if (ret < 0) {
-//             fprintf(stderr, "[ERR]: write failed: %s\n", strerror(errno));
-//             return -1;
-//         }
-
-//         written += ret;
-//     }
-// }
 
 char* fillString(char* string, size_t tamanho){
     if(sizeof(string) < tamanho){
@@ -74,33 +61,30 @@ int main(int argc, char **argv) {
     memcpy(request+1,fillString(pipe_name, 256),256);
     memcpy(request+257,fillString(box_name, 32) , 32);
     if(write(register_pipe, request, 289) == -1){
-        close(register_pipe);
         return -1;
     }
     
 
     
 
-    int tx = open(pipe_name, O_WRONLY);
-    if (tx == -1) {
+    int publisher_pipe = open(pipe_name, O_WRONLY);
+    if (publisher_pipe == -1) {
         fprintf(stderr, "[ERR]: open failed: %s\n", strerror(errno));
         close(register_pipe);
         return -1;
     }
-    char publisher_message[1024];
-    while(scanf("%1024s", publisher_message) != EOF){
+    char publisher_message[1025];
+    while(scanf("%1023s", publisher_message) != EOF){
         
     }
-    char publisher_message_final[1024];
-    if(strlen(publisher_message) != 1024){
-        strcpy(publisher_message_final, fillString(publisher_message, 1024));
-        
-    }
-    if(write(tx, publisher_message_final, 1024) == -1){
-        close(register_pipe);
+    memcpy(publisher_message, "9", 1);
+    memcpy(publisher_message + 1, fillString(publisher_message, 1024), 1024);
+    
+
+    if(write(publisher_pipe, publisher_message, 1025) == -1){
         return -1;
     }
-    close(tx);
+    close(publisher_pipe);
     close(register_pipe);
 
     return 0;
