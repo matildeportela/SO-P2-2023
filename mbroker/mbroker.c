@@ -12,6 +12,8 @@
 #include <unistd.h>
 #include <stdint.h>
 
+
+
 char* concatenate(const char* str1, const char* str2) {
     size_t len1 = strlen(str1);
     size_t len2 = strlen(str2);
@@ -56,18 +58,19 @@ int main(int argc, char **argv) {
 
     
     uint8_t opcode;
-    char opcode_char;
+    char opcode_char[2];
     char named_pipe[256];
     char box_name[32];
-    int return_code;
-    char error_message[1034];
-    char c;
-
-
-    if (read(register_pipe, &opcode_char, 1) == -1)
-        return -1;
-    opcode = (uint8_t) opcode_char;
     
+    
+    
+
+
+    if (read(register_pipe, opcode_char, 1) == -1){
+        return -1;
+    }
+    
+    opcode = (uint8_t)strtoul(opcode_char, NULL, 0);
     switch (opcode)
     {
     case(1):
@@ -76,7 +79,7 @@ int main(int argc, char **argv) {
             return -1;
         if (read(register_pipe, box_name, 32) == -1)
             return -1;
-        printf("goosworkmothafucker\n");
+        
         //pcq_enqueue();
 
 
@@ -88,33 +91,66 @@ int main(int argc, char **argv) {
             return -1;
         if (read(register_pipe, box_name, 32) == -1)
             return -1;
+        printf("vamos crlh\n");
+        
     
     break;
 
     case(3):
     //pedido de criação de caixa
-        // ssize_t box_request_pipe = read(register_pipe, named_pipe, 256);
-        // ssize_t box_request_box = read(register_pipe, box_name, 32);
-        // if (box_request_box != -1 && box_request_pipe != -1){
-        //     if(tfs_open(box_name, O_CREAT) == -1){
-        //         return -1;
-        //     }
+        ssize_t box_request_pipe = read(register_pipe, named_pipe, 256);
+        ssize_t box_request_box = read(register_pipe, box_name, 32);
+        if (box_request_box != -1 && box_request_pipe != -1){
+            int fd = tfs_open(box_name, O_CREAT);
+            if(fd != -1){
+                int answer_manager = open(named_pipe, O_WRONLY);
+                char code[2];
+                memcpy(code, "6", 1);
+                char return_code[2];
+                memcpy(return_code, concatenate(code, "1"), 2);
+                char error_message[1024];
+                fill_string(error_message, "", 1024);
+                char final_message[1026];
+                memcpy(final_message, concatenate(return_code, error_message), 1026);
+
+                if(write(answer_manager,final_message, 1026) == -1){
+                    return -1;
+                }
+
+            }
+            else{
+                int answer_manager = open(named_pipe, O_WRONLY);
+                char code[2];
+                memcpy(code, "6", 1);
+                char return_code[2];
+                memcpy(return_code, concatenate(code, "1"), 2);
+                char error_message[1024];
+                fill_string(error_message, "the box did not open\n", 1024);
+                char final_message[1026];
+                memcpy(final_message, concatenate(return_code, error_message), 1026);
+
+                if(write(answer_manager,final_message, 1026) == -1){
+                    return -1;
+                }
             
+            }
+        }    
+        else{
+            int answer_manager = open(named_pipe, O_WRONLY);
+                char code[2];
+                memcpy(code, "6", 1);
+                char return_code[2];
+                memcpy(return_code, concatenate(code, "1"), 2);
+                char error_message[1024];
+                fill_string(error_message, "the pipe was not read correctly", 1024);
+                char final_message[1026];
+                memcpy(final_message, concatenate(return_code, error_message), 1026);
 
-        // else{
-        //     return -1;
-        // }
+                if(write(answer_manager,final_message, 1026) == -1){
+                    return -1;
+                };
+        }
         
-    break;
-
-    case(4):
-    //resposta ao pedido de criação de caixa
-        //return_code é 0 (sucesso) ou 1 (ERRO)
-        if (read(register_pipe, &c, 1) == -1)
-            return -1;
-        return_code = atoi(&c);
-        if (read(register_pipe, error_message, 1024) == -1)
-            return -1;
         
     
     break;
@@ -134,45 +170,40 @@ int main(int argc, char **argv) {
     
     break;
 
-    case(6):
-    //resposta ao pedido de remoção de caixa
-        //return_code é 0 (sucesso) ou 1 (ERRO)
-        if (read(register_pipe, &return_code, 1) == -1)
-            return -1;
-        if (read(register_pipe, error_message, 1024) == -1)
-            return -1;
+    // case(6):
+    // //resposta ao pedido de remoção de caixa
+    //     //return_code é 0 (sucesso) ou 1 (ERRO)
+    //     if (read(register_pipe, &return_code, 1) == -1)
+    //         return -1;
+    //     if (read(register_pipe, error_message, 1024) == -1)
+    //         return -1;
 
-    break;
+    // break;
 
-    case(7):
-    //pedido de listagem de caixas
-        if (read(register_pipe, named_pipe, 256) == -1)
-            return -1;
+    // case(7):
+    // //pedido de listagem de caixas
+    //     if (read(register_pipe, named_pipe, 256) == -1)
+    //         return -1;
 
-    break;
+    // break;
 
-    case(8):
-    //resposta à listagem de caixas vem em várias mensagens
-    //DUVIDA: meio confuso perguntar ao prof?????
-    break;
+    // case(8):
+    // //resposta à listagem de caixas vem em várias mensagens
+    // //DUVIDA: meio confuso perguntar ao prof?????
+    // break;
 
     default:
         return -1;
     }
 
-    // int publisher_pipe = open(named_pipe, O_RDONLY);
-    // if (publisher_pipe == -1) {
-    //     fprintf(stderr, "[ERR]: open failed: %s\n", strerror(errno));
-    //     return -1;
-    // }
-
+    
         
 
     
     
 
 
-
+    
     return 0;
-    }   
+}   
 

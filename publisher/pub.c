@@ -37,6 +37,7 @@ int main(int argc, char **argv) {
     char box_name[32];
     fill_string(box_name, argv[3], 32);
     
+    
 
 
 
@@ -54,11 +55,11 @@ int main(int argc, char **argv) {
     }
 
     int register_pipe = open(register_pipe_name, O_WRONLY );
-    char request_1[1];
+    char request_1[2];
     memcpy(request_1, "1",1);
     char request[257];
     memcpy(request, concatenate(request_1,pipe_name), 257);
-   if(write(register_pipe,  concatenate(request,box_name), 289) == -1){
+    if(write(register_pipe,  concatenate(request,box_name), 289) == -1){
         return -1;
     }
     
