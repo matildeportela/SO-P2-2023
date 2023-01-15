@@ -91,7 +91,7 @@ int main(int argc, char **argv) {
             return -1;
         if (read(register_pipe, box_name, 32) == -1)
             return -1;
-        printf("vamos crlh\n");
+        
         
     
     break;
@@ -105,7 +105,7 @@ int main(int argc, char **argv) {
             if(fd != -1){
                 int answer_manager = open(named_pipe, O_WRONLY);
                 char code[2];
-                memcpy(code, "6", 1);
+                memcpy(code, "4", 1);
                 char return_code[2];
                 memcpy(return_code, concatenate(code, "1"), 2);
                 char error_message[1024];
@@ -121,7 +121,7 @@ int main(int argc, char **argv) {
             else{
                 int answer_manager = open(named_pipe, O_WRONLY);
                 char code[2];
-                memcpy(code, "6", 1);
+                memcpy(code, "4", 1);
                 char return_code[2];
                 memcpy(return_code, concatenate(code, "1"), 2);
                 char error_message[1024];
@@ -138,7 +138,7 @@ int main(int argc, char **argv) {
         else{
             int answer_manager = open(named_pipe, O_WRONLY);
                 char code[2];
-                memcpy(code, "6", 1);
+                memcpy(code, "4", 1);
                 char return_code[2];
                 memcpy(return_code, concatenate(code, "1"), 2);
                 char error_message[1024];

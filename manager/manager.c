@@ -106,21 +106,24 @@ int main(int argc, char **argv) {
         close(register_pipe);
         return -1;
     }
-    uint8_t code;
+    //uint8_t code;
+    //char opcode_char[2];
     int manager_file = open(pipe_name, O_RDONLY);
-    if(read(manager_file, code, 1) == -1){
-        return -1;
-    }
+    // if(read(manager_file, code , 1) == -1){
+    //     return -1;
+    // }
 
-    int32_t return_code;
-    if(read(manager_file, return_code, 1) == -1){
-        return -1;
-    }
+    // int32_t return_code;
+    // if(read(manager_file, return_code, 1) == -1){
+    //     return -1;
+    // }
 
-    char error_message[1024];
-    if(read(manager_file, error_message, 1024) == -1){
-        return -1;
-    }
+    // char error_message[1024];
+    // if(read(manager_file, error_message, 1024) == -1){
+    //     return -1;
+    // }
+
+    close(manager_file);
 
     close(register_pipe);
     return 0;
